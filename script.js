@@ -238,3 +238,24 @@ function setupPortfolioHover(item) {
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.portfolio-item').forEach(item => setupPortfolioHover(item));
 });
+
+// Ensure only one video plays at a time
+document.addEventListener('DOMContentLoaded', () => {
+    const videos = Array.from(document.querySelectorAll('video'));
+    if (!videos.length) return;
+
+    const pauseOthers = (current) => {
+        videos.forEach(v => {
+            if (v !== current && !v.paused) {
+                v.pause();
+            }
+        });
+    };
+
+    videos.forEach(v => {
+        // When a video starts, pause all other videos
+        v.addEventListener('play', () => pauseOthers(v));
+        // Extra guard for programmatic starts or seek resumes
+        v.addEventListener('playing', () => pauseOthers(v));
+    });
+});
